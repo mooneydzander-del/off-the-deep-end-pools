@@ -321,21 +321,34 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
 /* ============================================================
    HERO
    ============================================================ */
+
+/*
+ * LAYOUT ARCHITECTURE
+ * ─────────────────────────────────────────────────────────────
+ * .hero          → flex-direction: column (the viewport shell)
+ *                  height: 100svh so the video always fills the screen
+ *                  video/overlays are position:absolute — outside flex flow
+ *
+ * .hero-content  → flex: 1 (takes all remaining height from nav down)
+ *                  display: flex / flex-direction: column / justify-content: center
+ *                  padding-top: nav-safe-zone + breathing room
+ *                  padding-bottom: bottom breathing room
+ *                  gap: clamp(...) — ONE source of truth for child spacing
+ *                  (all individual margin-top/bottom on children are zeroed out)
+ *
+ * Result: headline is centered in the viewport minus nav, consistent across
+ * every screen size with no fragile math.
+ * ─────────────────────────────────────────────────────────────
+ */
 .hero {
   position: relative;
   width: 100%;
   height: 100svh;
-  min-height: 680px;
+  min-height: 640px;
   display: flex;
-  align-items: center;
+  flex-direction: column;   /* column so hero-content can be flex:1 */
   overflow: hidden;
-  /*
-   * Padding-top on the flex CONTAINER shifts the centering axis below the fixed nav.
-   * The video & overlay layers are position:absolute so they ignore this padding —
-   * they still fill the full viewport. Only hero-content (the flex child) is pushed
-   * down, guaranteeing the headline never collides with the navbar.
-   */
-  padding-top: var(--header-height);
+  /* NO padding-top here — that's on hero-content so the video still bleeds full-height */
 }
 
 .hero-video-wrap {
@@ -349,58 +362,73 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
   object-position: center;
 }
 
-/* Gradient overlay — layered for text contrast AND nav-area readability */
+/* Layered overlay: top band for nav contrast, left sweep for headline, bottom vignette */
 .hero-overlay {
   position: absolute;
   inset: 0;
   z-index: 1;
   background:
-    /* Top-region dark band — ensures nav + hero headline are always readable */
-    linear-gradient(180deg, rgba(3,9,18,0.72) 0%, rgba(3,9,18,0.0) 28%),
-    /* Left-side cinematic gradient — behind the headline copy */
-    linear-gradient(105deg, rgba(5, 13, 26, 0.92) 0%, rgba(5, 13, 26, 0.68) 38%, rgba(7, 55, 68, 0.38) 60%, transparent 80%),
-    /* Bottom vignette — smooth into section below */
-    linear-gradient(0deg, rgba(5, 13, 26, 0.9) 0%, transparent 30%);
+    linear-gradient(180deg, rgba(3,9,18,0.75) 0%, rgba(3,9,18,0.0) 22%),
+    linear-gradient(108deg, rgba(5,13,26,0.94) 0%, rgba(5,13,26,0.72) 35%, rgba(7,55,68,0.35) 60%, transparent 82%),
+    linear-gradient(0deg,   rgba(5,13,26,0.92) 0%, transparent 28%);
 }
 
-/* Radial center glow — adds depth */
 .hero-center-glow {
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: radial-gradient(ellipse 70% 50% at 30% 50%, rgba(0,100,140,0.18) 0%, transparent 70%);
+  background: radial-gradient(ellipse 70% 50% at 28% 52%, rgba(0,100,140,0.16) 0%, transparent 70%);
   pointer-events: none;
 }
 
 .hero-shimmer {
   position: absolute;
   bottom: 0; left: 0;
-  width: 100%; height: 250px;
+  width: 100%; height: 220px;
   background: linear-gradient(to top, var(--navy) 0%, transparent 100%);
   z-index: 2;
 }
 
+/* ─────────────────────────────────────────────────────────────
+   HERO CONTENT
+   Takes all available height (flex:1), centers its children
+   vertically, and uses gap for consistent spacing.
+   ───────────────────────────────────────────────────────────── */
 .hero-content {
   position: relative;
   z-index: 3;
+  flex: 1;                          /* fill height of hero below any siblings */
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;          /* vertically center the text block */
+  align-items: flex-start;
+
+  /* Single gap value drives ALL spacing between children — no per-element margins */
+  gap: clamp(0.7rem, 1.3vh, 1.2rem);
+
   width: 100%;
-  padding: 0 var(--section-px);
   max-width: 1200px;
   margin-inline: auto;
+
   /*
-   * This is the INTERNAL breathing room below the hero's nav safe-zone.
-   * The hero section's own padding-top: var(--header-height) already keeps
-   * the flex-centering region clear of the nav — so this just adds comfortable
-   * cinematic space between the centering origin and the first text element.
+   * padding-top = nav height + breathing room below nav
+   * padding-bottom = breathing room before trust strip / bottom of viewport
+   * Horizontal padding matches the site's --section-px variable.
    */
-  padding-top: clamp(2rem, 4.5vh, 5rem);
+  padding-top:    calc(var(--header-height) + clamp(2.5rem, 6vh, 6.5rem));
+  padding-bottom: clamp(4.5rem, 9vh, 9rem);
+  padding-left:   var(--section-px);
+  padding-right:  var(--section-px);
 }
 
+/* ── Hero label ── */
 .hero-label {
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
-  margin-bottom: 1.5rem;
+  /* margin zeroed — gap on parent handles spacing */
+  margin: 0;
   opacity: 0;
   animation: fadeSlideUp 0.8s var(--ease-smooth) 0.3s forwards;
 }
@@ -411,73 +439,93 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
   background: var(--aqua-bright);
 }
 
+/* ── Headline ── */
 .hero h1 {
-  max-width: 780px;
+  /* Slightly tighter max so 3 lines break cleanly on all viewports */
+  max-width: min(760px, 100%);
   color: var(--white);
-  line-height: 1.08;
+  /* Fluid size: compact on mobile, cinematic on desktop, not oversized on laptop */
+  font-size: clamp(2.8rem, 5.5vw, 5rem);
+  line-height: 1.06;
   letter-spacing: -0.025em;
   text-shadow:
     0 2px 6px rgba(0,0,0,0.95),
     0 8px 50px rgba(0,0,0,0.65),
     0 0 100px rgba(5,13,26,0.5);
+  /* No margin — gap on parent handles spacing */
+  margin: 0;
   opacity: 0;
   animation: fadeSlideUp 0.9s var(--ease-smooth) 0.5s forwards;
-  /* Extra bottom margin creates visual breathing room before subtitle */
-  margin-bottom: 0.15em;
 }
 .hero h1 em {
   font-style: italic;
   color: var(--aqua-bright);
-  /* Subtle glow — readable, cinematic, not neon */
   text-shadow:
     0 0 28px rgba(72, 202, 228, 0.38),
     0 0 60px rgba(72, 202, 228, 0.15),
     0 2px 6px rgba(0,0,0,0.8);
 }
 
+/* ── Sub paragraph ── */
 .hero-sub {
-  max-width: 560px;
-  margin-top: 1.6rem;
-  font-size: clamp(0.97rem, 1.8vw, 1.15rem);
-  color: rgba(244,249,251,0.84);
+  max-width: min(580px, 100%);
+  /* No margin-top — gap on parent handles spacing */
+  margin: 0;
+  font-size: clamp(0.96rem, 1.7vw, 1.1rem);
+  color: rgba(244,249,251,0.83);
   line-height: 1.78;
   text-shadow: 0 1px 12px rgba(0,0,0,0.7);
   opacity: 0;
   animation: fadeSlideUp 0.9s var(--ease-smooth) 0.7s forwards;
 }
 
+/* ── CTA button row ── */
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 1rem;
-  margin-top: 2.2rem;
+  gap: clamp(0.7rem, 1.5vw, 1.25rem);
+  /* No margin-top — gap on parent handles spacing */
+  margin: 0;
+  max-width: min(600px, 100%);
   opacity: 0;
   animation: fadeSlideUp 0.9s var(--ease-smooth) 0.9s forwards;
 }
 
+/* ── Trust microcopy ── */
 .hero-micro {
-  margin-top: 1rem;
+  /* No margin-top — gap on parent handles spacing */
+  margin: 0;
   font-family: var(--font-head);
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(144, 224, 239, 0.7);
+  color: rgba(144, 224, 239, 0.65);
+  max-width: min(580px, 100%);
   opacity: 0;
   animation: fadeSlideUp 0.8s var(--ease-smooth) 1.1s forwards;
 }
 .hero-micro span {
   display: inline-block;
-  margin-inline: 0.4rem;
-  opacity: 0.4;
+  margin-inline: 0.35rem;
+  opacity: 0.35;
 }
 
-/* Trust chips — premium glassmorphism */
+/* ── Trust chips ── */
+/*
+ * These sit at the bottom of the hero content block.
+ * margin-top: auto pushes them toward the bottom of the centered region,
+ * visually separating them from the main copy without a fixed pixel gap.
+ * Hidden on short viewports (max-height) to prevent crowding.
+ */
 .hero-trust {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.85rem;
-  margin-top: 3.5rem;
+  gap: 0.75rem;
+  margin: 0;
+  /* Extra push away from the micro text above */
+  margin-top: clamp(1rem, 2.5vh, 2.5rem);
+  max-width: min(760px, 100%);
   opacity: 0;
   animation: fadeSlideUp 0.9s var(--ease-smooth) 1.3s forwards;
 }
@@ -485,31 +533,34 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
 .trust-chip {
   display: flex;
   align-items: center;
-  gap: 0.55rem;
-  padding: 0.7rem 1.2rem;
+  gap: 0.5rem;
+  padding: 0.6rem 1.1rem;
   border-radius: 50px;
-  background: rgba(4, 22, 40, 0.68);
+  background: rgba(4, 22, 40, 0.72);
   backdrop-filter: blur(16px) saturate(160%);
   -webkit-backdrop-filter: blur(16px) saturate(160%);
-  border: 1px solid rgba(0, 180, 216, 0.25);
+  border: 1px solid rgba(0, 180, 216, 0.22);
   box-shadow: 0 4px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04);
   font-family: var(--font-head);
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 600;
   letter-spacing: 0.08em;
   color: var(--aqua-glow);
   transition: border-color var(--t-fast), box-shadow var(--t-fast);
 }
 .trust-chip:hover {
-  border-color: rgba(0,180,216,0.45);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.35), 0 0 20px rgba(0,180,216,0.1);
+  border-color: rgba(0,180,216,0.42);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.35), 0 0 18px rgba(0,180,216,0.1);
 }
-.trust-chip svg { width: 14px; height: 14px; color: var(--aqua-bright); flex-shrink: 0; }
+.trust-chip svg { width: 13px; height: 13px; color: var(--aqua-bright); flex-shrink: 0; }
 
-/* Scroll indicator */
+/* ── Scroll indicator ──
+ * Kept absolutely positioned so it never participates in the content layout.
+ * Sits at bottom-center of the hero, outside the flex flow entirely.
+ */
 .hero-scroll {
   position: absolute;
-  bottom: 2.5rem; left: 50%;
+  bottom: 2rem; left: 50%;
   transform: translateX(-50%);
   z-index: 3;
   display: flex;
@@ -521,13 +572,13 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
 }
 .hero-scroll span {
   font-family: var(--font-head);
-  font-size: 0.6rem;
+  font-size: 0.58rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(144, 224, 239, 0.5);
+  color: rgba(144, 224, 239, 0.45);
 }
 .hero-scroll-line {
-  width: 1px; height: 40px;
+  width: 1px; height: 36px;
   background: linear-gradient(to bottom, var(--aqua-bright), transparent);
   animation: scrollPulse 2s ease-in-out 2s infinite;
 }
@@ -2053,24 +2104,33 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
 
   .sticky-cta-bar { display: block; }
 
+  /* Hero: no changes to flex-direction (already column), just tighten padding */
   .hero {
     height: 100svh;
     min-height: 580px;
-    /*
-     * On mobile, switch from centered to top-aligned so the headline
-     * is reliably positioned in the upper screen area, not the middle.
-     * padding-top is handled by hero-content below.
-     */
-    align-items: flex-start;
-    padding-top: 0;
   }
   .hero-content {
     /*
-     * Mobile nav is ~80-90px. Give the nav its own space then
-     * add generous breathing room so the headline reads cleanly.
+     * Mobile nav is ~80-90px. We reduce the below-nav breathing room
+     * so the headline lands in the upper-center of the screen, not the dead center.
      */
-    padding-top: calc(var(--header-height) + clamp(1.25rem, 4.5vh, 2.5rem));
+    padding-top:    calc(var(--header-height) + clamp(1.5rem, 4.5vh, 3rem));
+    padding-bottom: clamp(5rem, 10vh, 10rem);
+    gap: clamp(0.6rem, 1.1vh, 1rem);
+    /* Switch to flex-start on mobile: top-to-bottom layout is clearer on small screens */
+    justify-content: flex-start;
   }
+
+  /* Buttons stack on mobile */
+  .hero-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 360px;
+    gap: 0.65rem;
+  }
+  .hero-actions .btn { width: 100%; justify-content: center; }
+
   .hero-trust { display: none; }
   .hero-scroll { display: none; }
 
@@ -2112,9 +2172,11 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
   h1 { font-size: 2.3rem; }
   h2 { font-size: 1.95rem; }
 
-  /* On very small phones, tighten hero top spacing a little */
+  /* Tighten hero padding on very small phones */
   .hero-content {
-    padding-top: calc(var(--header-height) + clamp(0.75rem, 3vh, 1.5rem));
+    padding-top:    calc(var(--header-height) + clamp(0.75rem, 2.5vh, 1.5rem));
+    padding-bottom: clamp(4rem, 8vh, 7rem);
+    gap: 0.6rem;
   }
 
   .trust-strip-inner { flex-direction: column; }
@@ -2123,7 +2185,38 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
   .trust-item + .trust-item { border-top: 1px solid rgba(0,180,216,0.1); }
   .quote-card { padding: 1.8rem 1.4rem; }
   .testimonials-grid .testi-card:last-child { display: block; }
-
-  /* Objection cards single column on tiny screens */
   .objections-grid { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   VIEWPORT-HEIGHT BREAKPOINTS
+   Adjust hero content on shorter screens (laptops, landscape phones).
+   Width breakpoints cannot catch a 1366×768 laptop vs a 1440×900 desktop —
+   height queries handle the difference correctly.
+   ============================================================ */
+
+/* Short viewports (most 768-800px tall laptops): hide trust chips, tighten spacing */
+@media (max-height: 800px) and (min-width: 769px) {
+  .hero-trust { display: none; }
+
+  .hero-content {
+    /* Reduce the nav breathing room slightly on short screens */
+    padding-top:    calc(var(--header-height) + clamp(1.5rem, 4vh, 3.5rem));
+    padding-bottom: clamp(3rem, 6vh, 5rem);
+    gap: clamp(0.55rem, 1vh, 0.95rem);
+  }
+}
+
+/* Very short viewports (landscape phones, 600px and under) */
+@media (max-height: 600px) {
+  .hero-trust  { display: none; }
+  .hero-scroll { display: none; }
+  .hero-micro  { display: none; }
+
+  .hero-content {
+    padding-top:    calc(var(--header-height) + 1rem);
+    padding-bottom: 2.5rem;
+    gap: 0.5rem;
+    justify-content: flex-start;
+  }
 }

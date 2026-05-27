@@ -25,7 +25,7 @@
   --glass-border:rgba(0, 180, 216, 0.2);
 
   /* Layout */
-  --header-height: clamp(84px, 8vh, 112px); /* used by hero to clear the fixed nav */
+  --header-height: clamp(88px, 8vh, 116px); /* used by hero to clear the fixed nav */
 
   /* Typography */
   --font-display: 'Cormorant Garamond', 'Georgia', serif;
@@ -197,13 +197,13 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
   border-bottom: 1px solid transparent;
 }
 .nav.scrolled {
-  background: rgba(4, 11, 22, 0.96);
+  background: rgba(4, 11, 22, 0.97);
   backdrop-filter: blur(28px) saturate(160%);
   -webkit-backdrop-filter: blur(28px) saturate(160%);
   padding-top: 0.9rem;
   padding-bottom: 0.9rem;
-  border-bottom: 1px solid rgba(0,180,216,0.14);
-  box-shadow: 0 4px 32px rgba(0,0,0,0.3), 0 1px 0 rgba(0,180,216,0.08);
+  border-bottom: 1px solid rgba(0,180,216,0.06);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.35);
 }
 
 .nav-logo {
@@ -359,18 +359,27 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
 .hero-video-wrap video {
   width: 100%; height: 100%;
   object-fit: cover;
-  object-position: center;
+  object-position: center center;
 }
 
-/* Layered overlay: top band for nav contrast, left sweep for headline, bottom vignette */
+/* Layered overlay for top-down pool video:
+   1. Base tint — brings entire video into the navy palette
+   2. Left-side sweep — dark wall behind the text block
+   3. Top band — nav contrast
+   4. Bottom fade — clean merge into trust strip */
 .hero-overlay {
   position: absolute;
   inset: 0;
   z-index: 1;
   background:
-    linear-gradient(180deg, rgba(3,9,18,0.75) 0%, rgba(3,9,18,0.0) 22%),
-    linear-gradient(108deg, rgba(5,13,26,0.94) 0%, rgba(5,13,26,0.72) 35%, rgba(7,55,68,0.35) 60%, transparent 82%),
-    linear-gradient(0deg,   rgba(5,13,26,0.92) 0%, transparent 28%);
+    /* base navy tint — tones down the bright water */
+    rgba(5, 13, 26, 0.52),
+    /* left dark sweep — text legibility wall */
+    linear-gradient(105deg, rgba(3,9,18,0.96) 0%, rgba(5,13,26,0.82) 30%, rgba(7,40,58,0.50) 55%, transparent 78%),
+    /* top band — keeps nav readable */
+    linear-gradient(180deg, rgba(3,9,18,0.80) 0%, transparent 25%),
+    /* bottom vignette — smooth merge into trust strip */
+    linear-gradient(0deg, rgba(5,13,26,0.96) 0%, transparent 32%);
 }
 
 .hero-center-glow {
@@ -384,9 +393,10 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
 .hero-shimmer {
   position: absolute;
   bottom: 0; left: 0;
-  width: 100%; height: 220px;
-  background: linear-gradient(to top, var(--navy) 0%, transparent 100%);
+  width: 100%; height: 280px;
+  background: linear-gradient(to top, var(--navy-mid) 0%, rgba(5,13,26,0.7) 45%, transparent 100%);
   z-index: 2;
+  pointer-events: none;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -407,15 +417,16 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
   justify-content: center;
   align-items: flex-start;
 
-  gap: clamp(1rem, 1.8vh, 1.6rem);
+  /* One source of truth for child spacing — generous enough for cinematic breathing room */
+  gap: clamp(1.4rem, 2.4vh, 2.2rem);
 
   width: 100%;
   max-width: 1200px;
   margin-inline: auto;
 
-  /* top: nav safe-zone + breathing room. bottom: space before trust strip. */
-  padding-top:    calc(var(--header-height) + clamp(3rem, 7vh, 7rem));
-  padding-bottom: clamp(5rem, 10vh, 10rem);
+  /* top: nav clear + cinematic breathing room. bottom: space before trust strip. */
+  padding-top:    calc(var(--header-height) + clamp(3.5rem, 8vh, 7.5rem));
+  padding-bottom: clamp(5rem, 12vh, 9.5rem);
   padding-left:   var(--section-px);
   padding-right:  var(--section-px);
 }
@@ -424,49 +435,55 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
 .hero-label {
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.7rem;
   margin: 0;
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
   opacity: 0;
   animation: fadeSlideUp 0.8s var(--ease-smooth) 0.3s forwards;
 }
 .hero-label::before {
   content: '';
   display: block;
-  width: 28px; height: 1.5px;
+  width: 32px; height: 1px;
   background: var(--aqua-bright);
+  opacity: 0.85;
   flex-shrink: 0;
 }
 
 /* ── Headline ── */
 .hero h1 {
-  max-width: min(720px, 100%);
+  /* 13ch keeps 3 tight lines at any desktop width without orphaning words */
+  max-width: min(680px, 100%);
   color: var(--white);
-  font-size: clamp(2.8rem, 5.5vw, 5rem);
-  line-height: 1.05;
-  letter-spacing: -0.025em;
+  font-size: clamp(3rem, 5.8vw, 6.5rem);
+  line-height: 1.0;
+  letter-spacing: -0.03em;
   margin: 0;
   text-shadow:
-    0 2px 6px rgba(0,0,0,0.95),
-    0 8px 50px rgba(0,0,0,0.65);
+    0 2px 8px rgba(0,0,0,0.98),
+    0 8px 60px rgba(0,0,0,0.7);
   opacity: 0;
   animation: fadeSlideUp 0.9s var(--ease-smooth) 0.5s forwards;
 }
 .hero h1 em {
   font-style: italic;
   color: var(--aqua-bright);
+  /* Beautiful glow but controlled — not over-blown */
   text-shadow:
-    0 0 28px rgba(72,202,228,0.35),
-    0 2px 6px rgba(0,0,0,0.8);
+    0 0 40px rgba(72,202,228,0.28),
+    0 0 80px rgba(0,180,216,0.14),
+    0 2px 8px rgba(0,0,0,0.9);
 }
 
 /* ── Sub paragraph ── */
 .hero-sub {
-  max-width: min(560px, 100%);
+  max-width: min(600px, 100%);
   margin: 0;
-  font-size: clamp(0.95rem, 1.6vw, 1.08rem);
-  color: rgba(244,249,251,0.82);
-  line-height: 1.78;
-  text-shadow: 0 1px 12px rgba(0,0,0,0.7);
+  font-size: clamp(0.98rem, 1.55vw, 1.1rem);
+  color: rgba(244,249,251,0.80);
+  line-height: 1.75;
+  text-shadow: 0 1px 16px rgba(0,0,0,0.75);
   opacity: 0;
   animation: fadeSlideUp 0.9s var(--ease-smooth) 0.7s forwards;
 }
@@ -476,10 +493,14 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: clamp(0.9rem, 2vw, 1.5rem);
+  gap: clamp(1rem, 1.8vw, 1.6rem);
   margin: 0;
   opacity: 0;
   animation: fadeSlideUp 0.9s var(--ease-smooth) 0.9s forwards;
+}
+/* Both hero buttons same height, same visual weight */
+.hero-actions .btn-lg {
+  padding: 1.1rem 2.6rem;
 }
 
 /* Deleted from hero — no longer in markup:
@@ -1908,14 +1929,6 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
   from { opacity: 0; transform: translateY(24px); }
   to   { opacity: 1; transform: none; }
 }
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-@keyframes scrollPulse {
-  0%, 100% { transform: scaleY(1); opacity: 0.6; }
-  50%       { transform: scaleY(0.6); opacity: 0.2; }
-}
 @keyframes ripple {
   0%   { transform: scale(0.3); opacity: 0.8; }
   100% { transform: scale(1);   opacity: 0; }
@@ -1975,35 +1988,29 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
 
   .sticky-cta-bar { display: block; }
 
-  /* Hero: no changes to flex-direction (already column), just tighten padding */
+  /* Hero: tighten padding for mobile while keeping cinematic breathing room */
   .hero {
     height: 100svh;
-    min-height: 580px;
+    min-height: 600px;
   }
   .hero-content {
-    /*
-     * Mobile nav is ~80-90px. We reduce the below-nav breathing room
-     * so the headline lands in the upper-center of the screen, not the dead center.
-     */
-    padding-top:    calc(var(--header-height) + clamp(1.5rem, 4.5vh, 3rem));
-    padding-bottom: clamp(5rem, 10vh, 10rem);
-    gap: clamp(0.6rem, 1.1vh, 1rem);
-    /* Switch to flex-start on mobile: top-to-bottom layout is clearer on small screens */
+    padding-top:    calc(var(--header-height) + clamp(2rem, 5vh, 3.5rem));
+    padding-bottom: clamp(5.5rem, 11vh, 8rem);
+    gap: clamp(1rem, 1.8vh, 1.6rem);
+    /* flex-start on mobile: content reads top-down, not vertically centred */
     justify-content: flex-start;
   }
 
-  /* Buttons stack on mobile */
+  /* Buttons stack vertically on mobile */
   .hero-actions {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
     width: 100%;
-    max-width: 360px;
-    gap: 0.65rem;
+    max-width: 340px;
+    gap: 0.75rem;
   }
   .hero-actions .btn { width: 100%; justify-content: center; }
-
-  .hero-trust { display: none; }
-  .hero-scroll { display: none; }
+  .hero-actions .btn-lg { padding: 1rem 2rem; }
 
   .problem-inner,
   .transform-inner,
@@ -2045,9 +2052,9 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
 
   /* Tighten hero padding on very small phones */
   .hero-content {
-    padding-top:    calc(var(--header-height) + clamp(0.75rem, 2.5vh, 1.5rem));
-    padding-bottom: clamp(4rem, 8vh, 7rem);
-    gap: 0.6rem;
+    padding-top:    calc(var(--header-height) + clamp(1.25rem, 3vh, 2rem));
+    padding-bottom: clamp(4.5rem, 9vh, 7rem);
+    gap: 0.9rem;
   }
 
   .trust-strip-inner { flex-direction: column; }
@@ -2066,28 +2073,21 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
    height queries handle the difference correctly.
    ============================================================ */
 
-/* Short viewports (most 768-800px tall laptops): hide trust chips, tighten spacing */
+/* Short viewports (most 768–800px tall laptops): tighten spacing */
 @media (max-height: 800px) and (min-width: 769px) {
-  .hero-trust { display: none; }
-
   .hero-content {
-    /* Reduce the nav breathing room slightly on short screens */
-    padding-top:    calc(var(--header-height) + clamp(1.5rem, 4vh, 3.5rem));
+    padding-top:    calc(var(--header-height) + clamp(1.5rem, 4vh, 3rem));
     padding-bottom: clamp(3rem, 6vh, 5rem);
-    gap: clamp(0.55rem, 1vh, 0.95rem);
+    gap: clamp(1rem, 1.5vh, 1.4rem);
   }
 }
 
 /* Very short viewports (landscape phones, 600px and under) */
 @media (max-height: 600px) {
-  .hero-trust  { display: none; }
-  .hero-scroll { display: none; }
-  .hero-micro  { display: none; }
-
   .hero-content {
     padding-top:    calc(var(--header-height) + 1rem);
     padding-bottom: 2.5rem;
-    gap: 0.5rem;
+    gap: 0.75rem;
     justify-content: flex-start;
   }
 }

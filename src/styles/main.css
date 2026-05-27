@@ -391,43 +391,40 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
 
 /* ─────────────────────────────────────────────────────────────
    HERO CONTENT
-   Takes all available height (flex:1), centers its children
-   vertically, and uses gap for consistent spacing.
+   Hero is flex-direction:column. hero-content takes flex:1 so it
+   fills the full viewport height. Inside, justify-content:center
+   vertically centres the 4-element text block (label → h1 → sub → actions).
+   gap is the single source of truth for all child spacing — no
+   individual margin-top/bottom anywhere.
    ───────────────────────────────────────────────────────────── */
 .hero-content {
   position: relative;
   z-index: 3;
-  flex: 1;                          /* fill height of hero below any siblings */
+  flex: 1;
 
   display: flex;
   flex-direction: column;
-  justify-content: center;          /* vertically center the text block */
+  justify-content: center;
   align-items: flex-start;
 
-  /* Single gap value drives ALL spacing between children — no per-element margins */
-  gap: clamp(0.7rem, 1.3vh, 1.2rem);
+  gap: clamp(1rem, 1.8vh, 1.6rem);
 
   width: 100%;
   max-width: 1200px;
   margin-inline: auto;
 
-  /*
-   * padding-top = nav height + breathing room below nav
-   * padding-bottom = breathing room before trust strip / bottom of viewport
-   * Horizontal padding matches the site's --section-px variable.
-   */
-  padding-top:    calc(var(--header-height) + clamp(2.5rem, 6vh, 6.5rem));
-  padding-bottom: clamp(4.5rem, 9vh, 9rem);
+  /* top: nav safe-zone + breathing room. bottom: space before trust strip. */
+  padding-top:    calc(var(--header-height) + clamp(3rem, 7vh, 7rem));
+  padding-bottom: clamp(5rem, 10vh, 10rem);
   padding-left:   var(--section-px);
   padding-right:  var(--section-px);
 }
 
-/* ── Hero label ── */
+/* ── Eyebrow label ── */
 .hero-label {
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
-  /* margin zeroed — gap on parent handles spacing */
   margin: 0;
   opacity: 0;
   animation: fadeSlideUp 0.8s var(--ease-smooth) 0.3s forwards;
@@ -437,23 +434,20 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
   display: block;
   width: 28px; height: 1.5px;
   background: var(--aqua-bright);
+  flex-shrink: 0;
 }
 
 /* ── Headline ── */
 .hero h1 {
-  /* Slightly tighter max so 3 lines break cleanly on all viewports */
-  max-width: min(760px, 100%);
+  max-width: min(720px, 100%);
   color: var(--white);
-  /* Fluid size: compact on mobile, cinematic on desktop, not oversized on laptop */
   font-size: clamp(2.8rem, 5.5vw, 5rem);
-  line-height: 1.06;
+  line-height: 1.05;
   letter-spacing: -0.025em;
+  margin: 0;
   text-shadow:
     0 2px 6px rgba(0,0,0,0.95),
-    0 8px 50px rgba(0,0,0,0.65),
-    0 0 100px rgba(5,13,26,0.5);
-  /* No margin — gap on parent handles spacing */
-  margin: 0;
+    0 8px 50px rgba(0,0,0,0.65);
   opacity: 0;
   animation: fadeSlideUp 0.9s var(--ease-smooth) 0.5s forwards;
 }
@@ -461,136 +455,50 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
   font-style: italic;
   color: var(--aqua-bright);
   text-shadow:
-    0 0 28px rgba(72, 202, 228, 0.38),
-    0 0 60px rgba(72, 202, 228, 0.15),
+    0 0 28px rgba(72,202,228,0.35),
     0 2px 6px rgba(0,0,0,0.8);
 }
 
 /* ── Sub paragraph ── */
 .hero-sub {
-  max-width: min(580px, 100%);
-  /* No margin-top — gap on parent handles spacing */
+  max-width: min(560px, 100%);
   margin: 0;
-  font-size: clamp(0.96rem, 1.7vw, 1.1rem);
-  color: rgba(244,249,251,0.83);
+  font-size: clamp(0.95rem, 1.6vw, 1.08rem);
+  color: rgba(244,249,251,0.82);
   line-height: 1.78;
   text-shadow: 0 1px 12px rgba(0,0,0,0.7);
   opacity: 0;
   animation: fadeSlideUp 0.9s var(--ease-smooth) 0.7s forwards;
 }
 
-/* ── CTA button row ── */
+/* ── CTA buttons ── */
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: clamp(0.7rem, 1.5vw, 1.25rem);
-  /* No margin-top — gap on parent handles spacing */
+  gap: clamp(0.9rem, 2vw, 1.5rem);
   margin: 0;
-  max-width: min(600px, 100%);
   opacity: 0;
   animation: fadeSlideUp 0.9s var(--ease-smooth) 0.9s forwards;
 }
 
-/* ── Trust microcopy ── */
-.hero-micro {
-  /* No margin-top — gap on parent handles spacing */
-  margin: 0;
-  font-family: var(--font-head);
-  font-size: 0.68rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgba(144, 224, 239, 0.65);
-  max-width: min(580px, 100%);
-  opacity: 0;
-  animation: fadeSlideUp 0.8s var(--ease-smooth) 1.1s forwards;
-}
-.hero-micro span {
-  display: inline-block;
-  margin-inline: 0.35rem;
-  opacity: 0.35;
-}
-
-/* ── Trust chips ── */
-/*
- * These sit at the bottom of the hero content block.
- * margin-top: auto pushes them toward the bottom of the centered region,
- * visually separating them from the main copy without a fixed pixel gap.
- * Hidden on short viewports (max-height) to prevent crowding.
- */
-.hero-trust {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin: 0;
-  /* Extra push away from the micro text above */
-  margin-top: clamp(1rem, 2.5vh, 2.5rem);
-  max-width: min(760px, 100%);
-  opacity: 0;
-  animation: fadeSlideUp 0.9s var(--ease-smooth) 1.3s forwards;
-}
-
-.trust-chip {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 1.1rem;
-  border-radius: 50px;
-  background: rgba(4, 22, 40, 0.72);
-  backdrop-filter: blur(16px) saturate(160%);
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
-  border: 1px solid rgba(0, 180, 216, 0.22);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04);
-  font-family: var(--font-head);
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  color: var(--aqua-glow);
-  transition: border-color var(--t-fast), box-shadow var(--t-fast);
-}
-.trust-chip:hover {
-  border-color: rgba(0,180,216,0.42);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.35), 0 0 18px rgba(0,180,216,0.1);
-}
-.trust-chip svg { width: 13px; height: 13px; color: var(--aqua-bright); flex-shrink: 0; }
-
-/* ── Scroll indicator ──
- * Kept absolutely positioned so it never participates in the content layout.
- * Sits at bottom-center of the hero, outside the flex flow entirely.
- */
-.hero-scroll {
-  position: absolute;
-  bottom: 2rem; left: 50%;
-  transform: translateX(-50%);
-  z-index: 3;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.4rem;
-  opacity: 0;
-  animation: fadeIn 1s var(--ease-smooth) 1.8s forwards;
-}
-.hero-scroll span {
-  font-family: var(--font-head);
-  font-size: 0.58rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(144, 224, 239, 0.45);
-}
-.hero-scroll-line {
-  width: 1px; height: 36px;
-  background: linear-gradient(to bottom, var(--aqua-bright), transparent);
-  animation: scrollPulse 2s ease-in-out 2s infinite;
-}
+/* Deleted from hero — no longer in markup:
+   .hero-micro   (trust microcopy line)
+   .hero-trust   (floating trust chips)
+   .trust-chip
+   .hero-scroll  (Scroll + vertical line)
+   .hero-scroll-line
+   All related CSS removed with those elements. */
 
 /* ============================================================
    TRUST STRIP — 5 Premium Badges
    ============================================================ */
 .trust-strip {
   background: linear-gradient(90deg, var(--navy-mid) 0%, rgba(7,61,74,0.6) 50%, var(--navy-mid) 100%);
-  border-top: 1px solid rgba(0,180,216,0.14);
-  border-bottom: 1px solid rgba(0,180,216,0.14);
-  padding: 1.8rem var(--section-px);
+  /* Very subtle borders — enough to define the section without a harsh black bar */
+  border-top: 1px solid rgba(0,180,216,0.07);
+  border-bottom: 1px solid rgba(0,180,216,0.07);
+  padding: 2rem var(--section-px);
   overflow: hidden;
   position: relative;
 }
@@ -1165,20 +1073,11 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
 .process-steps {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 1rem;
+  gap: 1.2rem;
   max-width: 1100px;
   margin-inline: auto;
   margin-top: 3.5rem;
-  position: relative;
-}
-.process-steps::before {
-  content: '';
-  position: absolute;
-  top: 28px;
-  left: calc(10% + 28px);
-  width: calc(80% - 56px);
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(0,180,216,0.3), transparent);
+  /* no position:relative needed — connector line removed */
 }
 
 .process-step {
@@ -2000,35 +1899,7 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
   opacity: 0.5;
 }
 
-/* ============================================================
-   WATERLINE SECTION DIVIDERS
-   A single aqua hairline gradient at the top of key sections
-   creates subtle but elegant visual breaks between content areas.
-   ============================================================ */
-
-/* Applied via section wrapper ::after for sections that need a top divider */
-.services,
-.process,
-.objections,
-.final-cta {
-  border-top: 1px solid rgba(0, 180, 216, 0.09);
-}
-
-.transform-section,
-.testimonials {
-  position: relative;
-}
-.transform-section::before,
-.testimonials::before {
-  /* These sections already define ::before — add the divider via box-shadow instead */
-  box-shadow: inset 0 1px 0 rgba(0, 180, 216, 0.1);
-}
-
-/* Trust strip top-glow accent line (already has border-top, upgrade it) */
-.trust-strip {
-  border-top: 1px solid rgba(0, 180, 216, 0.18);
-  border-bottom: 1px solid rgba(0, 180, 216, 0.12);
-}
+/* Section dividers — removed harsh lines. Trust strip borders handled in .trust-strip rule. */
 
 /* ============================================================
    ANIMATIONS
@@ -2084,7 +1955,7 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
 @media (max-width: 1024px) {
   .services-grid  { grid-template-columns: repeat(2, 1fr); }
   .process-steps  { grid-template-columns: repeat(3, 1fr); }
-  .process-steps::before { display: none; }
+  /* process connector already removed globally */
   .showcase-grid  { grid-template-columns: repeat(2, 1fr); }
   .showcase-card.tall { grid-row: span 1; aspect-ratio: 4/3; min-height: unset; }
   .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
@@ -2149,7 +2020,7 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
   .why-inner > *:last-child { display: none; }
 
   .process-steps { grid-template-columns: 1fr; max-width: 300px; margin-inline: auto; }
-  .process-steps::before { display: none; }
+  /* process connector already removed globally */
 
   .showcase-grid { grid-template-columns: 1fr; }
 

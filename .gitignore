@@ -1,0 +1,18 @@
+# System files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Original unformatted video filenames (already copied to public/videos/)
+hf_20260527_180808_c0392d3a-f54b-4ecf-a485-fbda0396f0a1.mp4
+hf_20260527_181511_897ce543-1091-4290-85ac-33badeaeb264.mp4

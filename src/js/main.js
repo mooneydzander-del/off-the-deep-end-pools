@@ -139,31 +139,39 @@ const on  = (el, ev, fn, opts) => el && el.addEventListener(ev, fn, opts);
 })();
 
 /* ============================================================
-   5. FAQ ACCORDION
+   5. FAQ ACCORDION — accessible with aria-expanded
    ============================================================ */
 (function initFAQ() {
   const items = qsa('.faq-item');
+
   items.forEach(item => {
     const question = qs('.faq-question', item);
     const answer   = qs('.faq-answer', item);
 
+    // Initialise aria-expanded
+    if (question) question.setAttribute('aria-expanded', 'false');
+
     on(question, 'click', () => {
       const isOpen = item.classList.contains('open');
 
-      // Close all
+      // Close all items
       items.forEach(i => {
         i.classList.remove('open');
-        qs('.faq-answer', i).style.maxHeight = null;
+        const q = qs('.faq-question', i);
+        const a = qs('.faq-answer', i);
+        if (q) q.setAttribute('aria-expanded', 'false');
+        if (a) a.style.maxHeight = null;
       });
 
-      // Open clicked
+      // Open clicked item if it was closed
       if (!isOpen) {
         item.classList.add('open');
+        question.setAttribute('aria-expanded', 'true');
         answer.style.maxHeight = answer.scrollHeight + 'px';
       }
     });
 
-    // Keyboard
+    // Keyboard support
     on(question, 'keydown', e => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
@@ -174,7 +182,7 @@ const on  = (el, ev, fn, opts) => el && el.addEventListener(ev, fn, opts);
 })();
 
 /* ============================================================
-   6. QUOTE FORM — validation + success state
+   6. QUOTE FORM — validation + shake + scroll + success state
    ============================================================ */
 (function initQuoteForm() {
   const form    = qs('#quote-form');
@@ -184,17 +192,44 @@ const on  = (el, ev, fn, opts) => el && el.addEventListener(ev, fn, opts);
   on(form, 'submit', e => {
     e.preventDefault();
 
-    // Basic validation
-    const required = qsa('[required]', form);
-    let valid = true;
-    required.forEach(field => {
+    // Clear previous error states
+    qsa('[required]', form).forEach(field => {
       field.style.borderColor = '';
+      field.removeAttribute('aria-invalid');
+    });
+
+    // Validate required fields
+    const required = qsa('[required]', form);
+    let firstInvalid = null;
+    let valid = true;
+
+    required.forEach(field => {
       if (!field.value.trim()) {
         field.style.borderColor = 'rgba(220,80,80,0.6)';
+        field.setAttribute('aria-invalid', 'true');
+        if (!firstInvalid) firstInvalid = field;
         valid = false;
       }
     });
-    if (!valid) return;
+
+    if (!valid) {
+      // Shake the form card to signal error
+      const card = form.closest('.quote-card') || form;
+      card.classList.remove('form-shake');
+      // Force reflow so the animation re-triggers
+      void card.offsetWidth;
+      card.classList.add('form-shake');
+      card.addEventListener('animationend', () => {
+        card.classList.remove('form-shake');
+      }, { once: true });
+
+      // Scroll to the first invalid field
+      if (firstInvalid) {
+        firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        firstInvalid.focus();
+      }
+      return;
+    }
 
     // Collect lead data
     const data = {
@@ -240,12 +275,24 @@ const on  = (el, ev, fn, opts) => el && el.addEventListener(ev, fn, opts);
       localStorage.setItem('otde_leads', JSON.stringify(leads));
     } catch (_) {}
 
-    // Show success
+    // Show success state
     form.style.display = 'none';
     if (success) {
       success.classList.add('active');
       success.setAttribute('aria-live', 'polite');
+      // Scroll success state into view
+      success.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
+  });
+
+  // Clear error highlight on input
+  qsa('[required]', form).forEach(field => {
+    on(field, 'input', () => {
+      if (field.value.trim()) {
+        field.style.borderColor = '';
+        field.removeAttribute('aria-invalid');
+      }
+    });
   });
 })();
 
@@ -267,7 +314,7 @@ const on  = (el, ev, fn, opts) => el && el.addEventListener(ev, fn, opts);
 })();
 
 /* ============================================================
-   8. STICKY CTA BAR — hide after form is in view
+   8. STICKY CTA BAR — smooth hide when quote form is visible
    ============================================================ */
 (function initStickyBar() {
   const bar  = qs('.sticky-cta-bar');
@@ -275,8 +322,9 @@ const on  = (el, ev, fn, opts) => el && el.addEventListener(ev, fn, opts);
   if (!bar || !form) return;
 
   const io = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      bar.style.display = e.isIntersecting ? 'none' : '';
+    entries.forEach(entry => {
+      // Toggle .is-hidden class so CSS transition plays (not display:none)
+      bar.classList.toggle('is-hidden', entry.isIntersecting);
     });
   }, { threshold: 0.1 });
 

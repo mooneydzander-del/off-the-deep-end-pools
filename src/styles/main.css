@@ -24,6 +24,9 @@
   --glass-bg:    rgba(5, 20, 40, 0.6);
   --glass-border:rgba(0, 180, 216, 0.2);
 
+  /* Layout */
+  --header-height: clamp(84px, 8vh, 112px); /* used by hero to clear the fixed nav */
+
   /* Typography */
   --font-display: 'Cormorant Garamond', 'Georgia', serif;
   --font-head:    'Montserrat', sans-serif;
@@ -120,14 +123,17 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
 }
 
 .btn-ghost {
-  background: transparent;
-  color: var(--white);
-  border: 1.5px solid rgba(255,255,255,0.35);
+  background: rgba(255,255,255,0.04);
+  color: rgba(244,249,251,0.9);
+  border: 1.5px solid rgba(255,255,255,0.28);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 .btn-ghost:hover {
-  background: rgba(255,255,255,0.07);
-  border-color: var(--aqua-bright);
+  background: rgba(0,180,216,0.08);
+  border-color: rgba(72,202,228,0.6);
   color: var(--aqua-bright);
+  box-shadow: 0 4px 24px rgba(0,180,216,0.12);
 }
 
 .btn-lg { padding: 1.15rem 2.8rem; font-size: 0.9rem; }
@@ -176,22 +182,28 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
   top: 0; left: 0;
   width: 100%;
   z-index: 1000;
-  padding: 1.2rem var(--section-px);
+  padding: 1.4rem var(--section-px);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  /* Subtle gradient ensures logo/links are always readable over any video frame */
+  background: linear-gradient(180deg, rgba(3, 9, 18, 0.78) 0%, rgba(3, 9, 18, 0.0) 100%);
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
   transition: background var(--t-med) var(--ease-smooth),
-              backdrop-filter var(--t-med),
-              padding var(--t-med);
+              backdrop-filter var(--t-med) var(--ease-smooth),
+              padding var(--t-med) var(--ease-smooth),
+              border-color var(--t-med);
+  border-bottom: 1px solid transparent;
 }
 .nav.scrolled {
-  background: rgba(5, 13, 26, 0.92);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  padding-top: 0.85rem;
-  padding-bottom: 0.85rem;
-  border-bottom: 1px solid rgba(0,180,216,0.12);
-  box-shadow: 0 4px 30px rgba(0,0,0,0.25);
+  background: rgba(4, 11, 22, 0.96);
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  padding-top: 0.9rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid rgba(0,180,216,0.14);
+  box-shadow: 0 4px 32px rgba(0,0,0,0.3), 0 1px 0 rgba(0,180,216,0.08);
 }
 
 .nav-logo {
@@ -313,10 +325,17 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
   position: relative;
   width: 100%;
   height: 100svh;
-  min-height: 650px;
+  min-height: 680px;
   display: flex;
   align-items: center;
   overflow: hidden;
+  /*
+   * Padding-top on the flex CONTAINER shifts the centering axis below the fixed nav.
+   * The video & overlay layers are position:absolute so they ignore this padding —
+   * they still fill the full viewport. Only hero-content (the flex child) is pushed
+   * down, guaranteeing the headline never collides with the navbar.
+   */
+  padding-top: var(--header-height);
 }
 
 .hero-video-wrap {
@@ -330,17 +349,18 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
   object-position: center;
 }
 
-/* Gradient overlay — stronger for text contrast */
+/* Gradient overlay — layered for text contrast AND nav-area readability */
 .hero-overlay {
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: linear-gradient(
-    155deg,
-    rgba(5, 13, 26, 0.82) 0%,
-    rgba(7, 55, 68, 0.58) 40%,
-    rgba(5, 13, 26, 0.88) 100%
-  );
+  background:
+    /* Top-region dark band — ensures nav + hero headline are always readable */
+    linear-gradient(180deg, rgba(3,9,18,0.72) 0%, rgba(3,9,18,0.0) 28%),
+    /* Left-side cinematic gradient — behind the headline copy */
+    linear-gradient(105deg, rgba(5, 13, 26, 0.92) 0%, rgba(5, 13, 26, 0.68) 38%, rgba(7, 55, 68, 0.38) 60%, transparent 80%),
+    /* Bottom vignette — smooth into section below */
+    linear-gradient(0deg, rgba(5, 13, 26, 0.9) 0%, transparent 30%);
 }
 
 /* Radial center glow — adds depth */
@@ -367,7 +387,13 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
   padding: 0 var(--section-px);
   max-width: 1200px;
   margin-inline: auto;
-  padding-top: 6rem;
+  /*
+   * This is the INTERNAL breathing room below the hero's nav safe-zone.
+   * The hero section's own padding-top: var(--header-height) already keeps
+   * the flex-centering region clear of the nav — so this just adds comfortable
+   * cinematic space between the centering origin and the first text element.
+   */
+  padding-top: clamp(2rem, 4.5vh, 5rem);
 }
 
 .hero-label {
@@ -386,30 +412,36 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
 }
 
 .hero h1 {
-  max-width: 740px;
+  max-width: 780px;
   color: var(--white);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
   text-shadow:
-    0 2px 4px rgba(0,0,0,0.9),
-    0 6px 40px rgba(0,0,0,0.6),
-    0 0 80px rgba(5,13,26,0.4);
+    0 2px 6px rgba(0,0,0,0.95),
+    0 8px 50px rgba(0,0,0,0.65),
+    0 0 100px rgba(5,13,26,0.5);
   opacity: 0;
   animation: fadeSlideUp 0.9s var(--ease-smooth) 0.5s forwards;
+  /* Extra bottom margin creates visual breathing room before subtitle */
+  margin-bottom: 0.15em;
 }
 .hero h1 em {
-  font-style: normal;
+  font-style: italic;
   color: var(--aqua-bright);
+  /* Subtle glow — readable, cinematic, not neon */
   text-shadow:
-    0 0 40px rgba(72, 202, 228, 0.5),
-    0 2px 4px rgba(0,0,0,0.7);
+    0 0 28px rgba(72, 202, 228, 0.38),
+    0 0 60px rgba(72, 202, 228, 0.15),
+    0 2px 6px rgba(0,0,0,0.8);
 }
 
 .hero-sub {
   max-width: 560px;
-  margin-top: 1.4rem;
-  font-size: clamp(1rem, 1.8vw, 1.18rem);
-  color: rgba(244,249,251,0.88);
-  line-height: 1.75;
-  text-shadow: 0 1px 8px rgba(0,0,0,0.6);
+  margin-top: 1.6rem;
+  font-size: clamp(0.97rem, 1.8vw, 1.15rem);
+  color: rgba(244,249,251,0.84);
+  line-height: 1.78;
+  text-shadow: 0 1px 12px rgba(0,0,0,0.7);
   opacity: 0;
   animation: fadeSlideUp 0.9s var(--ease-smooth) 0.7s forwards;
 }
@@ -1918,6 +1950,36 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
 }
 
 /* ============================================================
+   WATERLINE SECTION DIVIDERS
+   A single aqua hairline gradient at the top of key sections
+   creates subtle but elegant visual breaks between content areas.
+   ============================================================ */
+
+/* Applied via section wrapper ::after for sections that need a top divider */
+.services,
+.process,
+.objections,
+.final-cta {
+  border-top: 1px solid rgba(0, 180, 216, 0.09);
+}
+
+.transform-section,
+.testimonials {
+  position: relative;
+}
+.transform-section::before,
+.testimonials::before {
+  /* These sections already define ::before — add the divider via box-shadow instead */
+  box-shadow: inset 0 1px 0 rgba(0, 180, 216, 0.1);
+}
+
+/* Trust strip top-glow accent line (already has border-top, upgrade it) */
+.trust-strip {
+  border-top: 1px solid rgba(0, 180, 216, 0.18);
+  border-bottom: 1px solid rgba(0, 180, 216, 0.12);
+}
+
+/* ============================================================
    ANIMATIONS
    ============================================================ */
 @keyframes fadeSlideUp {
@@ -1991,8 +2053,24 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
 
   .sticky-cta-bar { display: block; }
 
-  .hero { height: 100svh; min-height: 580px; }
-  .hero-content { padding-top: 7rem; }
+  .hero {
+    height: 100svh;
+    min-height: 580px;
+    /*
+     * On mobile, switch from centered to top-aligned so the headline
+     * is reliably positioned in the upper screen area, not the middle.
+     * padding-top is handled by hero-content below.
+     */
+    align-items: flex-start;
+    padding-top: 0;
+  }
+  .hero-content {
+    /*
+     * Mobile nav is ~80-90px. Give the nav its own space then
+     * add generous breathing room so the headline reads cleanly.
+     */
+    padding-top: calc(var(--header-height) + clamp(1.25rem, 4.5vh, 2.5rem));
+  }
   .hero-trust { display: none; }
   .hero-scroll { display: none; }
 
@@ -2031,12 +2109,21 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
 }
 
 @media (max-width: 480px) {
-  h1 { font-size: 2.4rem; }
-  h2 { font-size: 2rem; }
+  h1 { font-size: 2.3rem; }
+  h2 { font-size: 1.95rem; }
+
+  /* On very small phones, tighten hero top spacing a little */
+  .hero-content {
+    padding-top: calc(var(--header-height) + clamp(0.75rem, 3vh, 1.5rem));
+  }
+
   .trust-strip-inner { flex-direction: column; }
   .trust-item { width: 100%; min-width: unset; justify-content: flex-start; }
   .trust-item + .trust-item::before { display: none; }
   .trust-item + .trust-item { border-top: 1px solid rgba(0,180,216,0.1); }
   .quote-card { padding: 1.8rem 1.4rem; }
   .testimonials-grid .testi-card:last-child { display: block; }
+
+  /* Objection cards single column on tiny screens */
+  .objections-grid { grid-template-columns: 1fr; }
 }

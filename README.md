@@ -82,7 +82,7 @@ The quote form currently saves leads to `localStorage`. To go live, replace the
 
 ## Media Assets Needed Per Client
 
-- [ ] `public/videos/pool-hero-template.mp4` — hero video (replace with client footage)
+- [ ] `public/videos/pool-hero-v2.mp4` — hero video (served at `/videos/pool-hero-v2.mp4`; replace with client footage)
 - [ ] `public/images/pool-hero-poster.jpg` — hero video first-frame poster
 - [ ] `public/videos/dirty-pool-to-clean-transformation.mp4` — transformation demo
 - [ ] `public/images/project-1.jpg` through `project-5.jpg` — portfolio photos

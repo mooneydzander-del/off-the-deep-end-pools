@@ -38,15 +38,15 @@ const SITE_CONFIG = {
   seo: {
     title:       'Off The Deep End Pools — Resort-Style Backyard Pool Design & Renovation',
     description: 'From custom builds to complete renovations. Turn your backyard into the deep end of luxury. Free quote.',
-    ogImage:     '/public/images/pool-hero-poster.jpg',
+    ogImage:     '/images/pool-hero-v2-poster.jpg',
   },
 
   /* ── MEDIA ── */
   media: {
-    heroVideo:        '/public/videos/pool-hero-template.mp4', // CLIENT SWAP: hero video
-    heroPoster:       '/public/images/pool-hero-poster.jpg',   // CLIENT SWAP: hero poster (first-frame still)
-    transformVideo:   '/public/videos/dirty-pool-to-clean-transformation.mp4', // CLIENT SWAP: transformation video
-    transformPoster:  '/public/images/dirty-pool-to-clean-poster.jpg',
+    heroVideo:        '/videos/pool-hero-v2.mp4',          // CLIENT SWAP: hero video
+    heroPoster:       '/images/pool-hero-v2-poster.jpg',   // CLIENT SWAP: hero poster (first-frame still)
+    transformVideo:   '/videos/dirty-pool-to-clean-transformation.mp4', // CLIENT SWAP: transformation video
+    transformPoster:  '/images/dirty-pool-to-clean-poster.jpg',
     // PROJECT SHOWCASE IMAGES — CLIENT SWAP for each client:
     projectImages: [
       '/public/images/project-1-resort-pool.jpg',

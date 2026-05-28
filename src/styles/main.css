@@ -565,21 +565,8 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
 }
 
 .trust-item-icon {
-  width: 30px; height: 30px;
-  border-radius: 8px;
-  background: rgba(0, 180, 216, 0.08);
-  border: 1px solid rgba(0,180,216,0.12);
-  display: grid;
-  place-items: center;
-  color: var(--aqua-bright);
-  flex-shrink: 0;
-  transition: background var(--t-fast), border-color var(--t-fast);
+  display: none;
 }
-.trust-item:hover .trust-item-icon {
-  background: rgba(0,180,216,0.16);
-  border-color: rgba(0,180,216,0.25);
-}
-.trust-item-icon svg { width: 13px; height: 13px; }
 
 .trust-item-text strong {
   display: block;
@@ -958,6 +945,7 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
 .service-card:hover::after { opacity: 1; }
 
 .sc-icon {
+  display: none;
   width: 38px; height: 38px;
   border-radius: 10px;
   background: rgba(0,180,216,0.08);
@@ -1050,6 +1038,7 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
 }
 
 .wp-icon {
+  display: none;
   width: 36px; height: 36px;
   border-radius: 10px;
   background: rgba(0,180,216,0.08);
@@ -1520,6 +1509,7 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
 }
 
 .objection-icon {
+  display: none;
   width: 32px; height: 32px;
   border-radius: 8px;
   background: rgba(0,180,216,0.08);
@@ -2066,12 +2056,6 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
   /* ── Global mobile buttons — less chunky ── */
   .btn { padding: 0.82rem 1.75rem; font-size: 0.82rem; letter-spacing: 0.1em; }
   .btn-lg { padding: 0.88rem 2rem; font-size: 0.84rem; }
-
-  /* ── Icons — hide on mobile, rely on typography ── */
-  .sc-icon        { display: none; }   /* service card icons */
-  .objection-icon { display: none; }   /* concern card icons */
-  .wp-icon        { display: none; }   /* why-us icons */
-  .trust-item-icon { display: none; }  /* trust strip icons */
 
   /* Pain icons and benefit checks — keep, they're inline and small */
 

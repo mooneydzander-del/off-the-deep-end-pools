@@ -26,17 +26,19 @@
   <link rel="stylesheet" href="src/styles/main.css" />
 
   <!-- Preload hero video for fast LCP -->
-  <link rel="preload" as="video" href="/public/videos/off-the-deep-end-hero-v2.mp4" />
+  <!-- CLIENT SWAP: update this href if the hero video filename changes -->
+  <link rel="preload" as="video" href="/public/videos/pool-hero-template.mp4" />
 </head>
 <body>
 
   <!-- ═══════════════════════════════════════
        NAVIGATION
   ═══════════════════════════════════════ -->
+  <!-- CLIENT SWAP: update business name, logo, and nav links for each client -->
   <nav class="nav" role="navigation" aria-label="Main navigation">
     <a href="#hero" class="nav-logo" aria-label="Off The Deep End Pools — Home">
-      Off The Deep End
-      <span>Pool Design &amp; Renovation</span>
+      Off The Deep End <!-- CLIENT SWAP: business name -->
+      <span>Pool Design &amp; Renovation</span> <!-- CLIENT SWAP: tagline -->
     </a>
 
     <ul class="nav-links" role="list">
@@ -76,6 +78,8 @@
   <section id="hero" class="hero" aria-label="Hero — luxury pool">
 
     <!-- Video Background -->
+    <!-- CLIENT SWAP: update src to client's hero video file -->
+    <!-- CLIENT SWAP: update poster to client's hero poster image -->
     <div class="hero-video-wrap" aria-hidden="true">
       <video
         autoplay
@@ -83,9 +87,9 @@
         loop
         playsinline
         preload="metadata"
-        poster="/public/images/off-the-deep-end-hero-v2-poster.jpg"
+        poster="/public/images/pool-hero-poster.jpg"
       >
-        <source src="/public/videos/off-the-deep-end-hero-v2.mp4" type="video/mp4" />
+        <source src="/public/videos/pool-hero-template.mp4" type="video/mp4" />
       </video>
     </div>
 
@@ -95,23 +99,27 @@
     <div class="hero-shimmer"      aria-hidden="true"></div>
 
     <!-- Content -->
+    <!-- CLIENT SWAP: update all hero copy below for each client -->
     <div class="hero-content">
       <div class="hero-label label">
-        Premium Pool Design &amp; Renovation
+        Premium Pool Design &amp; Renovation <!-- CLIENT SWAP: hero eyebrow label -->
       </div>
 
       <h1>
+        <!-- CLIENT SWAP: hero headline — keep to 3 lines max for layout -->
         Your Backyard Deserves<br />
         to Feel Like the<br />
         <em>Deep End of Luxury.</em>
       </h1>
 
       <p class="hero-sub">
+        <!-- CLIENT SWAP: hero sub-paragraph -->
         Off The Deep End Pools helps homeowners create crystal-clear, resort-style
         pools and backyard escapes built for relaxing, entertaining, and making
         memories that last all summer long.
       </p>
 
+      <!-- CLIENT SWAP: primary CTA label, secondary CTA label and target -->
       <div class="hero-actions">
         <a href="#quote-form-section" class="btn btn-primary btn-lg">
           Get a Free Quote
@@ -126,6 +134,7 @@
 
   <!-- ═══════════════════════════════════════
        TRUST STRIP — 5 Premium Badges
+       CLIENT SWAP: update trust items (icon, bold label, small text) for each client
   ═══════════════════════════════════════ -->
   <section class="trust-strip" aria-label="Why homeowners choose us">
     <div class="trust-strip-inner">
@@ -185,6 +194,7 @@
 
   <!-- ═══════════════════════════════════════
        PROBLEM / DESIRE
+       CLIENT SWAP: update pain points, heading, and desire card copy for each client
   ═══════════════════════════════════════ -->
   <section class="problem" aria-labelledby="problem-heading">
     <div class="problem-inner container">
@@ -257,6 +267,7 @@
 
   <!-- ═══════════════════════════════════════
        TRANSFORMATION VIDEO
+       CLIENT SWAP: update transformation copy, benefits list, and video src
   ═══════════════════════════════════════ -->
   <section id="transformation" class="transform-section" aria-labelledby="transform-heading">
     <div class="transform-inner container">
@@ -348,6 +359,8 @@
 
   <!-- ═══════════════════════════════════════
        SERVICES
+       CLIENT SWAP: update service cards (icon, title, description, outcome) for each client
+       Keep the same 6-card grid structure — just swap the content inside each card
   ═══════════════════════════════════════ -->
   <section id="services" class="services" aria-labelledby="services-heading">
     <div class="container">
@@ -438,6 +451,7 @@
 
   <!-- ═══════════════════════════════════════
        WHY CHOOSE US
+       CLIENT SWAP: update the 4 why-points and the stat cards for each client
   ═══════════════════════════════════════ -->
   <section class="why-us" aria-labelledby="why-heading">
     <div class="why-inner container">
@@ -513,7 +527,9 @@
   </section>
 
   <!-- ═══════════════════════════════════════
-       PROCESS
+       PROCESS — 5 Steps
+       CLIENT SWAP: update step titles and descriptions for each client
+       Keep the same 5-step structure — just update the text inside each step
   ═══════════════════════════════════════ -->
   <section id="process" class="process" aria-labelledby="process-heading">
     <div class="container">
@@ -569,6 +585,8 @@
 
   <!-- ═══════════════════════════════════════
        SHOWCASE / PORTFOLIO
+       CLIENT SWAP: replace .showcase-placeholder with real <img> tags for each client
+       See TODO comments inside each card for exact swap instructions
   ═══════════════════════════════════════ -->
   <section id="showcase" class="showcase" aria-labelledby="showcase-heading">
     <div class="container">
@@ -676,6 +694,8 @@
 
   <!-- ═══════════════════════════════════════
        TESTIMONIALS
+       CLIENT SWAP: replace placeholder reviews with verified real reviews for each client
+       Keep the same card structure (stars, project-tag, quote, author, location)
   ═══════════════════════════════════════ -->
   <section id="testimonials" class="testimonials" aria-labelledby="testimonials-heading">
     <div class="container">
@@ -773,6 +793,8 @@
 
   <!-- ═══════════════════════════════════════
        FAQ
+       CLIENT SWAP: update FAQ questions and answers for each client
+       Keep the same accordion structure — just swap the text
   ═══════════════════════════════════════ -->
   <section id="faq" class="faq" aria-labelledby="faq-heading">
     <div class="container">
@@ -872,7 +894,8 @@
   </section>
 
   <!-- ═══════════════════════════════════════
-       OBJECTION HANDLING (new section)
+       OBJECTION HANDLING
+       CLIENT SWAP: update objection cards (question + answer) for each client
   ═══════════════════════════════════════ -->
   <section class="objections" aria-labelledby="objections-heading">
     <div class="container">
@@ -930,6 +953,7 @@
 
   <!-- ═══════════════════════════════════════
        FINAL CTA
+       CLIENT SWAP: update final CTA headline and paragraph for each client
   ═══════════════════════════════════════ -->
   <section class="final-cta" aria-labelledby="final-cta-heading">
     <div class="final-cta-inner" data-reveal>
@@ -961,6 +985,8 @@
 
   <!-- ═══════════════════════════════════════
        QUOTE FORM
+       CLIENT SWAP: update form heading, project type options, and form disclaimer
+       CLIENT SWAP: connect form to client's backend/webhook (see TODO in main.js)
   ═══════════════════════════════════════ -->
   <section id="quote-form-section" class="quote-form-section" aria-labelledby="form-heading">
     <div class="quote-form-inner container">
@@ -1117,6 +1143,7 @@
 
   <!-- ═══════════════════════════════════════
        FOOTER
+       CLIENT SWAP: update business name, tagline, service links, and footer copy
   ═══════════════════════════════════════ -->
   <footer class="footer" role="contentinfo">
     <div class="footer-inner">

@@ -13,6 +13,9 @@ desktop.ini
 *.log
 npm-debug.log*
 
-# Original unformatted video filenames (already copied to public/videos/)
+# Raw AI-generated video filenames in root — already copied to public/videos/ with clean names
 hf_20260527_180808_c0392d3a-f54b-4ecf-a485-fbda0396f0a1.mp4
 hf_20260527_181511_897ce543-1091-4290-85ac-33badeaeb264.mp4
+hf_20260527_195322_1ec840c1-bfbd-4c80-8478-42a3c77377df.mp4
+hf_20260527_231545_417bf325-5530-43a1-9e14-366d664c9dd6.mp4
+done.mp4

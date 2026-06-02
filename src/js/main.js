@@ -10,6 +10,28 @@ const qsa = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
 const on  = (el, ev, fn, opts) => el && el.addEventListener(ev, fn, opts);
 
 /* ============================================================
+   0. LENIS SMOOTH SCROLLING
+   ============================================================ */
+let lenis = null;
+(function initLenis() {
+  const pref = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (pref || typeof Lenis === 'undefined') return;
+
+  lenis = new Lenis({
+    duration: 1.2,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    smoothWheel: true,
+    smoothTouch: false,
+  });
+
+  function raf(time) {
+    lenis.raf(time);
+    requestAnimationFrame(raf);
+  }
+  requestAnimationFrame(raf);
+})();
+
+/* ============================================================
    1. NAVIGATION — scroll class + mobile menu
    ============================================================ */
 (function initNav() {
@@ -306,9 +328,14 @@ const on  = (el, ev, fn, opts) => el && el.addEventListener(ev, fn, opts);
       const target = document.getElementById(id);
       if (!target) return;
       e.preventDefault();
-      const offset = 80; // nav height
-      const top = target.getBoundingClientRect().top + window.scrollY - offset;
-      window.scrollTo({ top, behavior: 'smooth' });
+      const offset = 85; // nav height
+      
+      if (lenis) {
+        lenis.scrollTo(target, { offset: -offset });
+      } else {
+        const top = target.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top, behavior: 'smooth' });
+      }
     });
   });
 })();
@@ -346,7 +373,7 @@ const on  = (el, ev, fn, opts) => el && el.addEventListener(ev, fn, opts);
   updateScroll();
 
   // Glassmorphism Mouse Tracking
-  const cards = qsa('.service-card, .testi-card, .objection-card, .quote-card');
+  const cards = qsa('.service-card, .testi-card, .objection-card, .quote-card, .luxury-pool-card, .ba-slider-container');
   cards.forEach(card => {
     on(card, 'mousemove', e => {
       const rect = card.getBoundingClientRect();
@@ -383,10 +410,107 @@ const on  = (el, ev, fn, opts) => el && el.addEventListener(ev, fn, opts);
     requestAnimationFrame(render);
 
     // Hover states for interactive elements
-    const interactives = qsa('a, button, .showcase-card, input, textarea, select, .faq-question');
+    const interactives = qsa('a, button, .showcase-card, input, textarea, select, .faq-question, .ba-handle');
     interactives.forEach(el => {
       on(el, 'mouseenter', () => document.body.classList.add('cursor-hover'));
       on(el, 'mouseleave', () => document.body.classList.remove('cursor-hover'));
     });
+  }
+})();
+
+/* ============================================================
+   10. INTERACTIVE BEFORE/AFTER SLIDER
+   ============================================================ */
+(function initBeforeAfterSlider() {
+  const container = qs('.ba-slider-container');
+  if (!container) return;
+  const handle = qs('.ba-handle', container);
+  
+  let isDragging = false;
+  
+  const updateWidth = () => {
+    const rect = container.getBoundingClientRect();
+    container.style.setProperty('--ba-width', `${rect.width}px`);
+  };
+  updateWidth();
+  on(window, 'resize', updateWidth);
+  
+  const updateSlider = (clientX) => {
+    const rect = container.getBoundingClientRect();
+    const x = clientX - rect.left;
+    let percentage = (x / rect.width) * 100;
+    if (percentage < 0) percentage = 0;
+    if (percentage > 100) percentage = 100;
+    
+    container.style.setProperty('--slider-pos', `${percentage}%`);
+  };
+  
+  // Update on hover when not dragging
+  on(container, 'mousemove', (e) => {
+    if (!isDragging) {
+      updateSlider(e.clientX);
+    }
+  });
+  
+  // Drag start
+  on(handle, 'mousedown', (e) => {
+    e.preventDefault();
+    isDragging = true;
+  });
+  
+  on(handle, 'touchstart', (e) => {
+    isDragging = true;
+  }, { passive: true });
+  
+  // Drag end
+  on(window, 'mouseup', () => {
+    isDragging = false;
+  });
+  
+  on(window, 'touchend', () => {
+    isDragging = false;
+  });
+  
+  // Drag move
+  on(window, 'mousemove', (e) => {
+    if (isDragging) {
+      updateSlider(e.clientX);
+    }
+  });
+  
+  on(window, 'touchmove', (e) => {
+    if (isDragging && e.touches[0]) {
+      updateSlider(e.touches[0].clientX);
+    }
+  }, { passive: true });
+})();
+
+/* ============================================================
+   11. CINEMATIC FLOATING BUBBLES
+   ============================================================ */
+(function initBubbles() {
+  const hero = qs('.hero');
+  if (!hero) return;
+  
+  const bubblesContainer = document.createElement('div');
+  bubblesContainer.className = 'hero-bubbles';
+  bubblesContainer.setAttribute('aria-hidden', 'true');
+  hero.appendChild(bubblesContainer);
+  
+  const count = 22;
+  for (let i = 0; i < count; i++) {
+    const bubble = document.createElement('span');
+    const size = Math.random() * 8 + 3; // 3px to 11px
+    const left = Math.random() * 100; // 0% to 100%
+    const delay = Math.random() * 10; // 0s to 10s
+    const duration = Math.random() * 7 + 6; // 6s to 13s
+    
+    bubble.style.width = `${size}px`;
+    bubble.style.height = `${size}px`;
+    bubble.style.left = `${left}%`;
+    bubble.style.animationDelay = `${delay}s`;
+    bubble.style.animationDuration = `${duration}s`;
+    
+    bubblesContainer.appendChild(bubble);
   }
 })();

@@ -30,6 +30,23 @@
   <link rel="preload" as="video" href="/videos/pool-hero-v2.mp4" />
 </head>
 <body>
+  <!-- SVG Caustics Filter (Hidden) -->
+  <svg style="display: none;" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="water-caustics-filter">
+        <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" result="noise" seed="1">
+          <animate attributeName="baseFrequency" dur="20s" values="0.02;0.015;0.02" repeatCount="indefinite"/>
+        </feTurbulence>
+        <feColorMatrix type="matrix" values="
+          1 0 0 0 0
+          0 1 0 0 0
+          0 0 1 0 0
+          0 0 0 0.4 0" result="coloredNoise"/>
+        <feDisplacementMap in="SourceGraphic" in2="coloredNoise" scale="25" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+    </defs>
+  </svg>
+
   <div class="cursor-dot" aria-hidden="true"></div>
   <div class="cursor-ring" aria-hidden="true"></div>
   <div class="noise-overlay" aria-hidden="true"></div>
@@ -111,30 +128,59 @@
     <!-- Content -->
     <!-- CLIENT SWAP: update all hero copy below for each client -->
     <div class="hero-content">
-      <div class="hero-label label">
-        Off The Deep End Pools <!-- CLIENT SWAP: hero eyebrow label -->
+      <div class="hero-text">
+        <div class="hero-label label">
+          Off The Deep End Pools <!-- CLIENT SWAP: hero eyebrow label -->
+        </div>
+
+        <h1>
+          <!-- CLIENT SWAP: hero headline — keep to 3 lines max for layout -->
+          Your Backyard Deserves<br />
+          to Feel Like the<br />
+          <em>Deep End of Luxury.</em>
+        </h1>
+
+        <p class="hero-sub">
+          <!-- CLIENT SWAP: hero sub-paragraph -->
+          Premium pool cleaning, maintenance, and service ensuring your backyard escape stays crystal clear and resort-ready all summer long.
+        </p>
+
+        <!-- CLIENT SWAP: primary CTA label, secondary CTA label and target -->
+        <div class="hero-actions">
+          <a href="#quote-form-section" class="btn btn-primary btn-lg">
+            Get a Free Pool Quote
+          </a>
+          <a href="#services" class="btn btn-ghost btn-lg">
+            View Services
+          </a>
+        </div>
       </div>
 
-      <h1>
-        <!-- CLIENT SWAP: hero headline — keep to 3 lines max for layout -->
-        Your Backyard Deserves<br />
-        to Feel Like the<br />
-        <em>Deep End of Luxury.</em>
-      </h1>
-
-      <p class="hero-sub">
-        <!-- CLIENT SWAP: hero sub-paragraph -->
-        Premium pool cleaning, maintenance, and service ensuring your backyard escape stays crystal clear and resort-ready all summer long.
-      </p>
-
-      <!-- CLIENT SWAP: primary CTA label, secondary CTA label and target -->
-      <div class="hero-actions">
-        <a href="#quote-form-section" class="btn btn-primary btn-lg">
-          Get a Free Pool Quote
-        </a>
-        <a href="#services" class="btn btn-ghost btn-lg">
-          View Services
-        </a>
+      <div class="hero-visual">
+        <!-- Premium glass visual pool card -->
+        <div class="luxury-pool-card glass">
+          <div class="lpc-surface">
+            <div class="lpc-water-base"></div>
+            <div class="lpc-caustics"></div>
+            <div class="lpc-pool-lights"></div>
+            <div class="lpc-depth-grad"></div>
+          </div>
+          <div class="lpc-content">
+            <div class="lpc-tag">Resort Living</div>
+            <div class="lpc-title">Weekly Premium Service</div>
+            <p class="lpc-desc">Crystal clear, chemically balanced, and perfectly maintained. We take care of the water so you can enjoy the experience.</p>
+            <div class="lpc-stat-row">
+              <div class="lpc-stat">
+                <span class="lpc-stat-num">5★</span>
+                <span class="lpc-stat-lbl">Rating</span>
+              </div>
+              <div class="lpc-stat">
+                <span class="lpc-stat-num">100%</span>
+                <span class="lpc-stat-lbl">Clarity Guarantee</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -321,28 +367,45 @@
         </p>
       </div>
 
-      <!-- Transformation video card — with glow wrap -->
-      <div class="transform-video-wrap js-lazy-video" data-reveal data-delay="2">
+      <!-- Interactive Before/After Split Card Slider -->
+      <div class="before-after-wrap" data-reveal data-delay="2">
         <div class="video-glow" aria-hidden="true"></div>
-        <div class="video-card" aria-label="Pool transformation video — before and after">
-          <video
-            muted
-            loop
-            playsinline
-            preload="none"
-            poster="/images/dirty-pool-to-clean-poster.jpg"
-            aria-hidden="true"
-          >
-            <source
-              data-src="/videos/dirty-pool-to-clean-transformation.mp4"
-              type="video/mp4"
-            />
-          </video>
-
-          <div class="video-card-label" aria-hidden="true">
-            <div class="vc-dot"></div>
-            Before &amp; After Transformation
+        <div class="ba-slider-container" aria-label="Interactive pool before and after transformation comparison">
+          
+          <!-- Before Layer (Murky Green) -->
+          <div class="ba-layer ba-before">
+            <div class="ba-content">
+              <div class="ba-water murky-water"></div>
+              <div class="algae-particles"></div>
+              <div class="ba-badge before-badge">Before: Neglected</div>
+            </div>
           </div>
+          
+          <!-- After Layer (Resort Blue) -->
+          <div class="ba-layer ba-after">
+            <div class="ba-content">
+              <div class="ba-water resort-water"></div>
+              <div class="resort-caustics-wrap">
+                <div class="lpc-caustics"></div>
+              </div>
+              <div class="bubble-particles"></div>
+              <div class="ba-badge after-badge">After: Crystal Resort</div>
+            </div>
+          </div>
+
+          <!-- Slider Control Handle -->
+          <div class="ba-handle">
+            <div class="ba-handle-line"></div>
+            <div class="ba-handle-button">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="arrow-left"><polyline points="15 18 9 12 15 6"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="arrow-right"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+          
+        </div>
+        <div class="slider-instruction">Hover or drag the handle to transform the pool</div>
+        <div class="ba-cta">
+          <a href="#quote-form-section" class="btn btn-primary">Transform Your Pool Today</a>
         </div>
       </div>
 
@@ -1061,6 +1124,8 @@
     document.getElementById('footer-year').textContent = new Date().getFullYear();
   </script>
 
+  <!-- Lenis Smooth Scroll -->
+  <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
   <!-- Main JS -->
   <script src="src/js/main.js" defer></script>
 </body>

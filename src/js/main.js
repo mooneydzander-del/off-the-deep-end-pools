@@ -330,3 +330,63 @@ const on  = (el, ev, fn, opts) => el && el.addEventListener(ev, fn, opts);
 
   io.observe(form);
 })();
+
+/* ============================================================
+   9. CINEMATIC UPGRADES (Scroll Progress, Cursor, Mouse Tracking)
+   ============================================================ */
+(function initCinematicEffects() {
+  // Scroll Progress
+  const updateScroll = () => {
+    const scrollPx = document.documentElement.scrollTop;
+    const winHeightPx = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrolled = winHeightPx > 0 ? `${(scrollPx / winHeightPx) * 100}%` : '0%';
+    document.documentElement.style.setProperty('--scroll', scrolled);
+  };
+  on(window, 'scroll', updateScroll, { passive: true });
+  updateScroll();
+
+  // Glassmorphism Mouse Tracking
+  const cards = qsa('.service-card, .testi-card, .objection-card, .quote-card');
+  cards.forEach(card => {
+    on(card, 'mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      card.style.setProperty('--mouse-x', `${x}px`);
+      card.style.setProperty('--mouse-y', `${y}px`);
+    });
+  });
+
+  // Custom Cursor
+  const dot = qs('.cursor-dot');
+  const ring = qs('.cursor-ring');
+  if (dot && ring) {
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let ringX = mouseX;
+    let ringY = mouseY;
+
+    on(window, 'mousemove', e => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      // Dot moves instantly
+      dot.style.transform = `translate(calc(${mouseX}px - 50%), calc(${mouseY}px - 50%))`;
+    });
+
+    // Smooth inertia loop for ring
+    const render = () => {
+      ringX += (mouseX - ringX) * 0.15;
+      ringY += (mouseY - ringY) * 0.15;
+      ring.style.transform = `translate(calc(${ringX}px - 50%), calc(${ringY}px - 50%))`;
+      requestAnimationFrame(render);
+    };
+    requestAnimationFrame(render);
+
+    // Hover states for interactive elements
+    const interactives = qsa('a, button, .showcase-card, input, textarea, select, .faq-question');
+    interactives.forEach(el => {
+      on(el, 'mouseenter', () => document.body.classList.add('cursor-hover'));
+      on(el, 'mouseleave', () => document.body.classList.remove('cursor-hover'));
+    });
+  }
+})();

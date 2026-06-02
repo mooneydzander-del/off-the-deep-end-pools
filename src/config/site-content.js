@@ -49,11 +49,11 @@ const SITE_CONFIG = {
     transformPoster:  '/images/dirty-pool-to-clean-poster.jpg',
     // PROJECT SHOWCASE IMAGES — CLIENT SWAP for each client:
     projectImages: [
-      '/public/images/project-1-resort-pool.jpg',
-      '/public/images/project-2-renovation.jpg',
-      '/public/images/project-3-resurfacing.jpg',
-      '/public/images/project-4-outdoor-living.jpg',
-      '/public/images/project-5-deep-clean.jpg',
+      '/images/project-1-resort-pool.png',
+      '/images/project-2-renovation.png',
+      '/images/project-3-resurfacing.png',
+      '/images/project-4-outdoor-living.png',
+      '/images/project-5-deep-clean.png',
     ],
   },
 

@@ -177,10 +177,8 @@ const SITE_CONFIG = {
   // CLIENT SWAP: update step titles and descriptions per client
   process: [
     { num: 1, title: 'Request a Quote',  desc: 'Fill out a quick form — takes less than 2 minutes. No commitment, no pressure.' },
-    { num: 2, title: 'Share Your Vision', desc: 'Tell us about your backyard and what you want it to feel like. We listen carefully.' },
-    { num: 3, title: 'Get a Clear Plan', desc: 'We put together an honest plan and quote — no vague numbers or hidden costs.' },
-    { num: 4, title: 'Watch It Happen',  desc: 'Our team gets to work. We keep you updated so you always know what\'s happening.' },
-    { num: 5, title: 'Enjoy Your Escape', desc: 'Dive in. Host friends. Relax all summer. This is the backyard you\'ve always wanted.' },
+    { num: 2, title: 'Schedule Service', desc: 'We’ll find a time that works perfectly for your schedule and outline exactly what to expect.' },
+    { num: 3, title: 'Enjoy a Clean Pool', desc: 'Our experts handle everything else. You just dive in, relax, and enjoy the pristine water.' },
   ],
 
   /* ── PROJECT SHOWCASE (5 cards) ── */
@@ -197,25 +195,25 @@ const SITE_CONFIG = {
   // CLIENT SWAP: replace with verified real reviews per client
   testimonials: [
     {
-      projectTag: 'Pool Renovation',
-      initials:   'MR',
-      name:       'Mike & Rachel T.',
-      location:   'Homeowners — Pool Renovation',
-      quote:      '"Our pool was an embarrassment — algae, cracked plaster, the whole thing. Off The Deep End completely transformed it. Now we use the pool every weekend. It looks like something out of a luxury resort."',
+      projectTag: 'Consistent Quality',
+      initials:   '',
+      name:       '',
+      location:   '',
+      quote:      '"You never have to wonder if the job was done right. Every visit leaves the pool looking flawless, balanced, and completely ready for the weekend. The reliability is unmatched."',
     },
     {
-      projectTag: 'New Pool Build',
-      initials:   'JL',
-      name:       'Jennifer L.',
-      location:   'Homeowner — New Pool Build',
-      quote:      '"I was nervous about hiring a contractor. These guys were transparent from day one — the quote was clear, the timeline was honest, and the end result blew us away. Couldn\'t be happier with our new pool."',
+      projectTag: 'Transparent Pricing',
+      initials:   '',
+      name:       '',
+      location:   '',
+      quote:      '"No hidden fees, no surprise charges. They outline exactly what to expect from the start. It’s incredibly refreshing to work with a team that values honesty as much as hard work."',
     },
     {
-      projectTag: 'Pool Refresh',
-      initials:   'DK',
-      name:       'David K.',
-      location:   'Homeowner — Pool Refresh',
-      quote:      '"We had a completely neglected pool for years — green water, broken tiles, the works. Off The Deep End did a full refresh and now our whole backyard feels different. It\'s like getting a brand-new house."',
+      projectTag: 'Spotless Water',
+      initials:   '',
+      name:       '',
+      location:   '',
+      quote:      '"They turned our murky, frustrating pool into a crystal-clear oasis in record time. We didn\'t even know the water could look this good. Absolute lifesavers for the summer season."',
     },
   ],
 

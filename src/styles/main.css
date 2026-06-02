@@ -2779,3 +2779,92 @@ p  { font-size: clamp(0.95rem, 1.6vw, 1.1rem); }
   0% { transform: translate(0, 0) scale(1); }
   100% { transform: translate(10%, 15%) scale(1.1); }
 }
+
+/* ============================================================
+   ULTRA CINEMATIC UPDATES (Liquid Shine, Caustics, Bubbles)
+   ============================================================ */
+
+/* Darker Luxury Base Variables */
+:root {
+  --navy: #040d1a;
+  --black-blue: #02060d;
+}
+body {
+  background-color: var(--black-blue);
+}
+
+/* Hero Water Caustics */
+.hero-water-caustics {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(72, 202, 228, 0.15) 0%, transparent 60%),
+    radial-gradient(circle at 80% 20%, rgba(0, 180, 216, 0.1) 0%, transparent 40%);
+  mix-blend-mode: color-dodge;
+  animation: caustics-flow 12s infinite alternate ease-in-out;
+  pointer-events: none;
+  z-index: 1;
+}
+@keyframes caustics-flow {
+  0% { transform: scale(1) translate(0, 0); opacity: 0.5; }
+  100% { transform: scale(1.1) translate(-2%, 3%); opacity: 0.9; }
+}
+
+/* Floating Bubbles */
+.hero-cinematic-frame::before, .hero-cinematic-frame::after {
+  content: '';
+  position: absolute;
+  bottom: -10%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 10px rgba(255,255,255,0.1), inset 0 0 4px rgba(255,255,255,0.4);
+  animation: bubble-rise 8s infinite ease-in;
+  z-index: 2;
+}
+.hero-cinematic-frame::after {
+  width: 12px; height: 12px;
+  left: 30%;
+  animation-duration: 11s;
+  animation-delay: 2s;
+}
+.hero-cinematic-frame::before {
+  left: 70%;
+  animation-duration: 9s;
+  animation-delay: 4s;
+}
+@keyframes bubble-rise {
+  0% { transform: translateY(0) scale(1); opacity: 0; }
+  20% { opacity: 0.6; }
+  80% { opacity: 0.6; }
+  100% { transform: translateY(-120vh) scale(1.5); opacity: 0; }
+}
+
+/* Liquid Shine Buttons */
+.btn {
+  position: relative;
+  overflow: hidden;
+}
+.btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.3) 50%,
+    rgba(255,255,255,0) 100%
+  );
+  transform: skewX(-25deg);
+  transition: left 0.7s ease;
+}
+.btn:hover::after {
+  left: 200%;
+}
+.btn-primary:hover {
+  box-shadow: 0 0 20px rgba(0, 180, 216, 0.4), 0 0 40px rgba(0, 180, 216, 0.2);
+}
